@@ -13,14 +13,6 @@
     ],
     "require": {
         "php": ">=7.0",
-        "composer/installers": "~1.0",
-        "rainlab/user-plugin": "dev-master",
-        "liip/cors": "dev-master"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@gitlab.liip.ch:jazz/oc-cors-plugin.git"
-        }
-    ]
+        "composer/installers": "~1.0"
+    }
 }
