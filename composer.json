@@ -1,0 +1,26 @@
+{
+    "name": "liip/user",
+    "type": "october-plugin",
+    "description": "OctoberCMS User plugin",
+    "keywords": ["october", "cms", "user", "api"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sascha Aeppli",
+            "email": "sascha.aeppli@liip.ch",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "composer/installers": "~1.0",
+        "rainlab/user-plugin": "dev-master",
+        "liip/cors": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@gitlab.liip.ch:jazz/oc-cors-plugin.git"
+        }
+    ]
+}
