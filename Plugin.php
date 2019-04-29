@@ -8,8 +8,8 @@ use System\Classes\PluginBase;
 class Plugin extends PluginBase
 {
     public $require = [
-        'rainlab.user',
-        'liip.cors',
+        'Rainlab.User',
+        'Liip.Cors',
     ];
 
     /**
@@ -20,7 +20,7 @@ class Plugin extends PluginBase
     public function pluginDetails()
     {
         return [
-            'name'        => 'user',
+            'name'        => 'User',
             'description' => 'expose rainlab user as rest api',
             'author'      => 'liip',
             'icon'        => 'icon-leaf'
