@@ -4,7 +4,7 @@
 Route::group(['middleware' => ['web', \Barryvdh\Cors\HandleCors::class], 'prefix' => 'auth'], function() {
     Route::post('/login', function() {
         try {
-            Auth::authenticate(request()->json()->all());
+            return Auth::authenticate(request()->json()->all());
         } catch(\October\Rain\Auth\AuthException $e) {
             return response('Username or Password wrong', 422);
         }
