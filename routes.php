@@ -4,7 +4,13 @@
 Route::group(['middleware' => ['web', \Barryvdh\Cors\HandleCors::class], 'prefix' => 'auth'], function() {
     Route::post('/login', function() {
         try {
-            return Auth::authenticate(request()->json()->all());
+            $user = Auth::authenticate(request()->json()->all());
+            if($message = Event::fire('liip.user.authenticated', [$user], true)) {
+                Auth::logout();
+                return response($message, 403);
+            } else {
+                return $user;
+            }
         } catch(\October\Rain\Auth\AuthException $e) {
             return response('Username or Password wrong', 422);
         }
