@@ -9,7 +9,9 @@ Route::group(['middleware' => ['web', \Barryvdh\Cors\HandleCors::class], 'prefix
                 Auth::logout();
                 return response($message, 403);
             } else {
-                return $user;
+                $query = $user->query();
+                Event::fire('liip.user.extendUser', [$query]);
+                return $query->get();
             }
         } catch(\October\Rain\Auth\AuthException $e) {
             return response('Username or Password wrong', 422);
@@ -22,7 +24,10 @@ Route::group(['middleware' => ['web', \Barryvdh\Cors\HandleCors::class], 'prefix
 
     Route::group(['middleware' => \RainLab\User\Classes\AuthMiddleware::class], function() {
         Route::get('/', function() {
-            return Auth::getUser();
+            $user = Auth::getUser();
+            $query = $user->query();
+            Event::fire('liip.user.extendUser', [$query]);
+            return $query->get();
         });
     });
 });
