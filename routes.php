@@ -7,27 +7,30 @@ Route::group(['middleware' => ['web', \Barryvdh\Cors\HandleCors::class], 'prefix
             $user = Auth::authenticate(request()->json()->all());
             if($message = Event::fire('liip.user.authenticated', [$user], true)) {
                 Auth::logout();
-                return response($message, 403);
+                throw new \October\Rain\Auth\AuthException($message);
             } else {
                 return $user;
             }
         } catch(\October\Rain\Auth\AuthException $e) {
-            $errorCode = 'Error.server';
+            $errorMessage = 'Error.server';
             $msg = $e->getMessage();
 
-            if(strpos($msg, 'banned')) {
-                $errorCode = 'Error.banned';
+            if(strpos($msg, 'banned') !== FALSE) {
+                $errorMessage = 'Error.banned';
             }
-            if(strpos($msg, 'activated')) {
-                $errorCode = 'Error.activated';
+            if(strpos($msg, 'activated') !== FALSE) {
+                $errorMessage = 'Error.activated';
             }
-            if(strpos($msg, 'password') || strpos($msg, 'credentials')) {
-                $errorCode = 'Error.authentication';
+            if(strpos($msg, 'password') !== FALSE || strpos($msg, 'credentials') !== FALSE) {
+                $errorMessage = 'Error.authentication';
             }
-            if(strpos($msg, 'suspended')) {
-                $errorCode = 'Error.suspended';
+            if(strpos($msg, 'suspended') !== FALSE) {
+                $errorMessage = 'Error.suspended';
             }
-            return response($errorCode, 422);
+            if(strpos($msg, 'Error.customerInactive') !== FALSE) {
+                $errorMessage = 'Error.customerInactive';
+            }
+            return response($errorMessage, 403);
         }
     });
 
