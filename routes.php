@@ -12,7 +12,22 @@ Route::group(['middleware' => ['web', \Barryvdh\Cors\HandleCors::class], 'prefix
                 return $user;
             }
         } catch(\October\Rain\Auth\AuthException $e) {
-            return response('Username or Password wrong', 422);
+            $errorCode = 'Error.server';
+            $msg = $e->getMessage();
+
+            if(strpos($msg, 'baned')) {
+                $errorCode = 'Error.baned';
+            }
+            if(strpos($msg, 'activated')) {
+                $errorCode = 'Error.activated';
+            }
+            if(strpos($msg, 'password') || strpos($msg, 'credentials')) {
+                $errorCode = 'Error.authentication';
+            }
+            if(strpos($msg, 'suspended')) {
+                $errorCode = 'Error.suspended';
+            }
+            return response($errorCode, 422);
         }
     });
 
