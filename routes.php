@@ -15,8 +15,8 @@ Route::group(['middleware' => ['web', \Barryvdh\Cors\HandleCors::class], 'prefix
             $errorCode = 'Error.server';
             $msg = $e->getMessage();
 
-            if(strpos($msg, 'baned')) {
-                $errorCode = 'Error.baned';
+            if(strpos($msg, 'banned')) {
+                $errorCode = 'Error.banned';
             }
             if(strpos($msg, 'activated')) {
                 $errorCode = 'Error.activated';
