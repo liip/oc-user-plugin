@@ -1,7 +1,10 @@
-<?php namespace Liip\User\Tests;
+<?php namespace Liip\User\Tests\Functional;
 
 use Auth;
+use Liip\User\Tests\ApiTest;
+use RainLab\User\Models\Settings;
 use RainLab\User\Models\User;
+
 
 class UserApiTest extends ApiTest
 {
@@ -70,5 +73,34 @@ class UserApiTest extends ApiTest
             ->assertStatus(500)
         ;
         $this->assertCount(1, User::all());
+    }
+
+    public function testDisallowRegistration()
+    {
+        Settings::set('allow_registration', false);
+        $this->postJson('/auth/register',
+            [
+                'email' => 'test@user.com',
+                'password' => '1234'
+            ])
+            ->assertStatus(500)
+        ;
+    }
+
+    public function testRegisteredUserIsActivated()
+    {
+        Settings::set('allow_registration', true);
+
+        $this->postJson('/auth/register',
+            [
+                'email' => 'inactive@user.com',
+                'password' => '1234'
+            ])
+            ->assertStatus(200)
+        ;
+
+        $user = User::findByEmail('inactive@user.com')->first();
+        $this->assertNotNull($user);
+        $this->assertTrue($user->is_activated);
     }
 }

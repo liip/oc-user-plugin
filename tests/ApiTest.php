@@ -1,6 +1,7 @@
 <?php namespace Liip\User\Tests;
 
 use PluginTestCase;
+use RainLab\User\Models\Settings;
 use RainLab\User\Models\User;
 use Auth;
 
@@ -11,8 +12,9 @@ class ApiTest extends PluginTestCase
     public function setUp()
     {
         parent::setUp();
-        Factories::register();
+        Settings::resetDefault();
 
+        Factories::register();
         $this->user = factory(User::class)->create();
         $this->impersonate($this->user);
     }
@@ -25,7 +27,7 @@ class ApiTest extends PluginTestCase
 
     protected function impersonate($user)
     {
-        Auth::impersonate($this->user);
+        Auth::impersonate($user);
         return $this;
     }
 
