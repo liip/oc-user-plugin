@@ -50,4 +50,14 @@ class AuthController
     {
         Auth::logout();
     }
+
+    public function register()
+    {
+        $credentials = [
+            'email' => request()->get('email'),
+            'password' => request()->get('password'),
+            'password_confirmation' => request()->get('password'),
+        ];
+        Auth::register($credentials);
+    }
 }

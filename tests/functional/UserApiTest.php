@@ -50,4 +50,25 @@ class UserApiTest extends ApiTest
             ->assertStatus(403)
         ;
     }
+
+    public function testRegisterUserThatDoesntExist()
+    {
+        $email = 'test@user.com';
+        $this->postJson('/auth/register', ['email' => $email, 'password' => '1234'])
+            ->assertStatus(200)
+        ;
+        $this->assertNotNull(User::findByEmail($email));
+    }
+
+    public function testRegisterUserThatDoesExist()
+    {
+        $this->postJson('/auth/register',
+            [
+                'email' => $this->user->email,
+                'password' => '1234'
+            ])
+            ->assertStatus(500)
+        ;
+        $this->assertCount(1, User::all());
+    }
 }
