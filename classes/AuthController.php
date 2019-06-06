@@ -73,6 +73,12 @@ class AuthController
             'password_confirmation' => request()->get('password'),
         ];
 
-        $user = Auth::register($credentials, $automaticActivation);
+        try {
+            return Auth::register($credentials, $automaticActivation);
+        } catch(\Exception $e) {
+            $msg = $e->getMessage();
+            return response($msg, 400);
+        }
+
     }
 }
