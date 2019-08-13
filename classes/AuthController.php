@@ -3,8 +3,11 @@
 use Auth;
 use Event;
 use Lang;
+use Mail;
+use Log;
 use October\Rain\Exception\ApplicationException;
 use RainLab\User\Models\Settings as UserSettings;
+use RainLab\User\Models\User;
 
 /**
  * Class AuthController
@@ -22,29 +25,27 @@ class AuthController
             $user = Auth::authenticate(request()->json()->all());
             if ($message = Event::fire('liip.user.authenticated', [$user], true)) {
                 Auth::logout();
-                throw new \October\Rain\Auth\AuthException($message);
+                throw new \October\Rain\Auth\AuthException($message, 'Error.authentication');
             } else {
                 return $user;
             }
         } catch (\October\Rain\Auth\AuthException $e) {
+            $code = $e->getCode();
             $errorMessage = 'Error.server';
-            $msg = $e->getMessage();
 
-            if (strpos($msg, 'banned') !== FALSE) {
-                $errorMessage = 'Error.banned';
-            }
-            if (strpos($msg, 'activated') !== FALSE) {
+            if ($code === AuthManager::ERROR_ACTIVATED) {
                 $errorMessage = 'Error.activated';
             }
-            if (strpos($msg, 'password') !== FALSE || strpos($msg, 'credentials') !== FALSE) {
+            if ($code === AuthManager::ERROR_BANNED) {
+                $errorMessage = 'Error.banned';
+            }
+            if ($code === AuthManager::ERROR_AUTHENTICATION) {
                 $errorMessage = 'Error.authentication';
             }
-            if (strpos($msg, 'suspended') !== FALSE) {
+            if ($code === AuthManager::ERROR_SUSPENDED) {
                 $errorMessage = 'Error.suspended';
             }
-            if (strpos($msg, 'Error.customerInactive') !== FALSE) {
-                $errorMessage = 'Error.customerInactive';
-            }
+
             return response($errorMessage, 403);
         }
     }
@@ -63,22 +64,32 @@ class AuthController
         if (!$canRegister) {
             throw new ApplicationException(Lang::get('rainlab.user::lang.account.registration_disabled'));
         }
-        // $requireActivation = UserSettings::get('require_activation', true);
-        $automaticActivation = UserSettings::get('activate_mode') == UserSettings::ACTIVATE_AUTO;
-        // $userActivation = UserSettings::get('activate_mode') == UserSettings::ACTIVATE_USER;
 
+        $password = post('password');
         $credentials = [
             'email' => request()->get('email'),
-            'password' => request()->get('password'),
-            'password_confirmation' => request()->get('password'),
+            'password' => $password,
+            'password_confirmation' => $password,
         ];
-
         try {
-            return Auth::register($credentials, $automaticActivation);
+            $user = Auth::register($credentials);
+            Mail::to($user)->send(new MailRegister($user));
         } catch(\Exception $e) {
             $msg = $e->getMessage();
             return response($msg, 400);
         }
+    }
 
+    public function activate($code)
+    {
+        $user = User::where('activation_code', $code)->first();
+        if($user === null) {
+            return response('Error.activate.codeInvalid', 400);
+        }
+        if (!$user->attemptActivation($code)) {
+            return response('Error.activate.attemptFailed', 400);
+        }
+
+        return redirect(env('FRONTEND_URL'));
     }
 }
