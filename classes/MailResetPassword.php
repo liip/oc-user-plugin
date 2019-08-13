@@ -3,7 +3,7 @@
 use October\Rain\Mail\Mailable;
 use RainLab\User\Models\User;
 
-class MailRegister extends Mailable
+class MailResetPassword extends Mailable
 {
     private $user;
 
@@ -14,14 +14,14 @@ class MailRegister extends Mailable
 
     public function build()
     {
-        $code = $this->user->getActivationCode();
+        $code = $this->user->getResetPasswordCode();
         $data = [
             'user' => $this->user,
             'code' => $code,
-            'url' => url('auth/activate/' . $code),
-            'frontend_url' => env('FRONTEND_URL'),
+            'url' => env('FRONTEND_URL') . '/password?code=' . $code,
         ];
-        $this->view('liip.user::mail.register', $data);
+        $this->view('liip.user::mail.restore', $data);
+
         return $this;
     }
 }

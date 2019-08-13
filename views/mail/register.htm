@@ -1,0 +1,8 @@
+subject = "Ecorating - Willkommen"
+layout = default
+==
+<p>Sie haben sich mit der E-Mail <strong>{{ user.email }}</strong> auf <a href="{{ frontend_url }}">{{ frontend_url }}</a> registriert.</p>
+<p>Um Ihren Account zu aktivieren klicken sie den folgenden Link:</p>
+{% partial 'button' url=url body %}
+Account aktivieren
+{% endpartial %}

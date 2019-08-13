@@ -1,10 +1,11 @@
 <?php namespace Liip\User\Tests\Functional;
 
 use Auth;
+use Liip\User\Classes\MailResetPassword;
+use Mail;
 use Liip\User\Tests\ApiTest;
 use RainLab\User\Models\Settings;
 use RainLab\User\Models\User;
-
 
 class UserApiTest extends ApiTest
 {
@@ -28,9 +29,9 @@ class UserApiTest extends ApiTest
     public function testLoginWithExitingUser()
     {
         $this->logout();
-        $user = factory(User::class)->create(['password' => '1234', 'password_confirmation' => '1234']);
+        $user = factory(User::class)->create(['password' => '12345678', 'password_confirmation' => '12345678']);
 
-        $this->postJson('/auth/login', ['login' => $user->email, 'password' => '1234'])
+        $this->postJson('/auth/login', ['login' => $user->email, 'password' => '12345678'])
             ->assertStatus(200)
             ->assertJsonFragment(['id' => "$user->id"])
         ;
@@ -39,7 +40,7 @@ class UserApiTest extends ApiTest
     public function testLoginWithExitingUserWrongPassword()
     {
         $this->logout();
-        $user = factory(User::class)->create(['password' => '1234', 'password_confirmation' => '1234']);
+        $user = factory(User::class)->create(['password' => '12345678', 'password_confirmation' => '12345678']);
 
         $this->postJson('/auth/login', ['login' => $user->email, 'password' => '123'])
             ->assertStatus(403)
@@ -56,10 +57,12 @@ class UserApiTest extends ApiTest
 
     public function testRegisterUserThatDoesntExist()
     {
+
         $email = 'test@user.com';
-        $this->postJson('/auth/register', ['email' => $email, 'password' => '1234'])
+        $this->postJson('/auth/register', ['email' => $email, 'password' => '12345678'])
             ->assertStatus(200)
         ;
+
         $this->assertNotNull(User::findByEmail($email));
     }
 
@@ -68,9 +71,9 @@ class UserApiTest extends ApiTest
         $this->postJson('/auth/register',
             [
                 'email' => $this->user->email,
-                'password' => '1234'
+                'password' => '12345678'
             ])
-            ->assertStatus(500)
+            ->assertStatus(400)
         ;
         $this->assertCount(1, User::all());
     }
@@ -81,7 +84,7 @@ class UserApiTest extends ApiTest
         $this->postJson('/auth/register',
             [
                 'email' => 'test@user.com',
-                'password' => '1234'
+                'password' => '12345678'
             ])
             ->assertStatus(500)
         ;
@@ -94,7 +97,7 @@ class UserApiTest extends ApiTest
         $this->postJson('/auth/register',
             [
                 'email' => 'inactive@user.com',
-                'password' => '1234'
+                'password' => '12345678'
             ])
             ->assertStatus(200)
         ;
@@ -102,5 +105,33 @@ class UserApiTest extends ApiTest
         $user = User::findByEmail('inactive@user.com')->first();
         $this->assertNotNull($user);
         $this->assertTrue($user->is_activated);
+    }
+
+    public function testRestorePasswordNonExistingUser()
+    {
+        $this->postJson('/auth/restore-password', [
+            'email' => 'no@user.com'
+            ])
+            ->assertStatus(200)
+        ;
+    }
+
+    public function testRestorePasswordEmailIsRequired()
+    {
+        $this->postJson('/auth/restore-password')
+            ->assertStatus(400)
+            ->assertSee('Error.restore.emailInvalid')
+        ;
+    }
+
+    public function testRestorePasswordSendsEmail()
+    {
+        Mail::fake();
+
+        $this->postJson('/auth/restore-password', ['email' => $this->user->email])
+            ->assertStatus(200)
+        ;
+
+        Mail::assertSent(MailResetPassword::class, 1);
     }
 }

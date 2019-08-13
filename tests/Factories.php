@@ -11,7 +11,7 @@ class Factories
         $factory = app(Factory::class);
 
         $factory->define(User::class, function (Faker $faker) {
-            $password = $faker->password;
+            $password = $faker->password(8, 255);
             return [
                 'username' => $faker->userName,
                 'email' => $faker->email,

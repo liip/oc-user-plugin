@@ -5,6 +5,8 @@ use Event;
 use Lang;
 use Mail;
 use Log;
+use RainLab\User\Models\User as UserModel;
+use Validator;
 use October\Rain\Exception\ApplicationException;
 use RainLab\User\Models\Settings as UserSettings;
 use RainLab\User\Models\User;
@@ -91,5 +93,39 @@ class AuthController
         }
 
         return redirect(env('FRONTEND_URL'));
+    }
+
+    public function restorePassword()
+    {
+        $rules = [
+            'email' => 'required|email|between:6,255'
+        ];
+        $validation = Validator::make(post(), $rules);
+        if ($validation->fails()) {
+            return response('Error.restore.emailInvalid', 400);
+        }
+
+        $user = UserModel::findByEmail(post('email'));
+        if( $user ) {
+            Mail::to($user)->send(new MailResetPassword($user));
+        }
+    }
+
+    public function setPassword()
+    {
+        $rules = [
+            'password' => 'required|between:8,255',
+            'code' => 'required',
+        ];
+        $validation = Validator::make(post(), $rules);
+        if($validation->fails()) {
+            return response('Error.restore_validation', 400);
+        }
+
+        $user = User::where('reset_password_code', post('code'))->first();
+
+        if (!$user || !$user->attemptResetPassword(post('code'), post('password'))) {
+            return response('Error.restore_code_invalid', 400);
+        }
     }
 }

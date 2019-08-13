@@ -37,9 +37,8 @@ class Plugin extends PluginBase
         ];
     }
 
-    public function register()
+    public function boot()
     {
-        parent::register();
         App::singleton('user.auth', function() {
             return AuthManager::instance();
         });
