@@ -27,7 +27,7 @@ class AuthController
             $user = Auth::authenticate(request()->json()->all());
             if ($message = Event::fire('liip.user.authenticated', [$user], true)) {
                 Auth::logout();
-                throw new \October\Rain\Auth\AuthException($message, 'Error.authentication');
+                return response( $message, 403);
             } else {
                 return $user;
             }

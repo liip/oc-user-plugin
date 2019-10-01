@@ -1,0 +1,16 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+name: backend::lang.user.role.name
+form: $/liip/user/models/userrole/fields.yaml
+modelClass: Liip\User\Models\UserRole
+defaultRedirect: liip/user/userroles
+
+create:
+    redirect: liip/user/userroles/update/:id
+    redirectClose: liip/user/userroles
+
+update:
+    redirect: liip/user/userroles
+    redirectClose: liip/user/userroles

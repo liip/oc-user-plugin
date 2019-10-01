@@ -1,0 +1,22 @@
+fields:
+    name:
+        label: 'backend::lang.user.role.name_field'
+        commentAbove: 'backend::lang.user.role.name_comment'
+        span: auto
+        type: text
+    code:
+        label: 'backend::lang.user.role.code_field'
+        commentAbove: 'backend::lang.user.role.code_comment'
+        span: auto
+        type: text
+    description:
+        label: 'backend::lang.user.role.description_field'
+        type: textarea
+        size: tiny
+tabs:
+    fields:
+        permissions:
+            tab: backend::lang.user.permissions
+            type: checkboxlist
+            quickselect: true
+            options: getPermissionsOptions

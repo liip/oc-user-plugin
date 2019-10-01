@@ -6,6 +6,7 @@ use October\Rain\Auth\AuthException;
 use \RainLab\User\Classes\AuthManager as BaseAuthManager;
 use Session;
 use Cookie;
+use System\Classes\PluginManager;
 
 class AuthManager extends BaseAuthManager
 {
@@ -18,6 +19,35 @@ class AuthManager extends BaseAuthManager
      * @var string Throttle Model Class
      */
     protected $throttleModel = Throttle::class;
+    protected $permissions = [];
+    protected $permissionCache = false;
+
+    /**
+     * Returns a list of the registered permissions items.
+     * @return array
+     */
+    public function listPermissions()
+    {
+        if ($this->permissionCache !== false) {
+            return $this->permissionCache;
+        }
+
+        /*
+         * Load plugin items
+         */
+        $plugins = PluginManager::instance()->getPlugins();
+
+        foreach ($plugins as $id => $plugin) {
+            if (method_exists($plugin, 'registerUserPermissions')) {
+                $items = $plugin->registerUserPermissions();
+                if (is_array($items)) {
+                    $this->permissions = $this->permissions + $items;
+                }
+            }
+        }
+
+        return $this->permissionCache = $this->permissions;
+    }
 
     /**
      * Finds a user by the given credentials.
@@ -137,4 +167,6 @@ class AuthManager extends BaseAuthManager
          */
         $user->afterLogin();
     }
+
+
 }
