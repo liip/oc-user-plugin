@@ -121,7 +121,7 @@ class Plugin extends PluginBase
     {
         User::extend(function ($model) {
             $model->belongsTo['role'] = UserRole::class;
-            $model->setAppends(['userPermissions']);
+            $model->setAppends(['user_permissions']);
             $model->addDynamicMethod('getUserPermissionsAttribute', function () use ($model) {
                 if (!$model->role) {
                     return [];
