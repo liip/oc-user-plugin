@@ -7,6 +7,7 @@ use \RainLab\User\Classes\AuthManager as BaseAuthManager;
 use Session;
 use Cookie;
 use System\Classes\PluginManager;
+use Event;
 
 class AuthManager extends BaseAuthManager
 {
@@ -168,5 +169,9 @@ class AuthManager extends BaseAuthManager
         $user->afterLogin();
     }
 
-
+    public function extendUserQuery($query)
+    {
+        parent::extendUserQuery($query);
+        Event::fire('liip.user.extendUserQuery', [$query]);
+    }
 }
