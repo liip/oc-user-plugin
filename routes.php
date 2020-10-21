@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['middleware' => ['api', 'web'], 'prefix' => 'auth'], function() {
+Route::group(['middleware' => ['web'], 'prefix' => 'auth'], function() {
     // public endpoints
     Route::post('/login', '\Liip\User\Classes\AuthController@login');
     Route::get('/logout', '\Liip\User\Classes\AuthController@logout');
