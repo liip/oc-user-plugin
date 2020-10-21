@@ -21,7 +21,7 @@ class UserApiTest extends ApiTest
     public function testCanAccessAuthEndpointLoggedIn()
     {
         $this->get('/auth')
-            ->assertStatus(200)
+            ->assertStatus(201)
             ->assertJson($this->user->toArray())
         ;
     }

@@ -19,7 +19,7 @@ class ApiTest extends PluginTestCase
 
     protected $user;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -40,7 +40,7 @@ class ApiTest extends PluginTestCase
         $this->impersonate($this->user);
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         Auth::logout();
         // Get the plugin manager
