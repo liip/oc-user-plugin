@@ -127,48 +127,6 @@ class AuthManager extends BaseAuthManager
         return $this->findThrottleByUserId($userId, $ipAddress);
     }
 
-    /**
-     * Logs in the given user and sets properties
-     * in the session.
-     * @throws AuthException If the user is not activated and $this->requireActivation = true
-     */
-    public function login(Authenticatable $user, $remember = true)
-    {
-        /*
-         * Fire the 'beforeLogin' event
-         */
-        $user->beforeLogin();
-
-        /*
-         * Activation is required, user not activated
-         */
-        if ($this->requireActivation && !$user->is_activated) {
-            $login = $user->getLogin();
-            throw new AuthException(sprintf(
-                'Cannot login user "%s" as they are not activated.', $login
-            ), self::ERROR_ACTIVATED);
-        }
-
-        $this->user = $user;
-
-        /*
-         * Create session/cookie data to persist the session
-         */
-        if ($this->useSession) {
-            $toPersist = [$user->getKey(), $user->getPersistCode()];
-            Session::put($this->sessionKey, $toPersist);
-
-            if ($remember) {
-                Cookie::queue(Cookie::forever($this->sessionKey, $toPersist));
-            }
-        }
-
-        /*
-         * Fire the 'afterLogin' event
-         */
-        $user->afterLogin();
-    }
-
     public function extendUserQuery($query)
     {
         parent::extendUserQuery($query);
