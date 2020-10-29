@@ -1,4 +1,6 @@
-<?php namespace Liip\User\Updates;
+<?php
+
+namespace Liip\User\Updates;
 
 use October\Rain\Database\Schema\Blueprint;
 use Schema;
@@ -17,16 +19,20 @@ class Migration102 extends Migration
             $table->text('permissions')->nullable();
             $table->timestamps();
         });
-        Schema::table('users', function(Blueprint $table) {
-            $table->integer('role_id')->nullable();
-        });
+        if (Schema::hasTable('users')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->integer('role_id')->nullable();
+            });
+        }
     }
 
     public function down()
     {
-        Schema::table('users', function(Blueprint $table) {
-            $table->dropColumn('role_id');
-        });
+        if (Schema::hasTable('users')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('role_id');
+            });
+        }
         Schema::drop('liip_user_roles');
     }
 }

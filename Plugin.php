@@ -1,4 +1,6 @@
-<?php namespace Liip\User;
+<?php
+
+namespace Liip\User;
 
 use Liip\User\Classes\AuthManager;
 use Liip\User\Models\UserRole;
@@ -15,7 +17,7 @@ use Backend;
 class Plugin extends PluginBase
 {
     public $require = [
-        'RainLab.User',       
+        'RainLab.User',
     ];
 
     /**
@@ -43,7 +45,7 @@ class Plugin extends PluginBase
 
     public function boot()
     {
-        App::singleton('user.auth', function() {
+        App::singleton('user.auth', function () {
             return AuthManager::instance();
         });
         $this->extendRainlabUserSideMenu();
@@ -132,5 +134,4 @@ class Plugin extends PluginBase
             });
         });
     }
-
 }
