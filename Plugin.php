@@ -131,11 +131,11 @@ class Plugin extends PluginBase
             });
             // TODO implement getDefaultSettingsAttribute
             $model->addDynamicMethod('getDefaultSettingsAttribute', function () use ($model) {
-                return ['calendar-subscribed' => true];
+                return ['calendar-filter-subscribed' => true];
             });
             // TODO implement getSettingsAttribute
             $model->addDynamicMethod('getSettingsAttribute', function () use ($model) {
-                return ['calendar-subscribed' => false];
+                return ['calendar-filter-subscribed' => false, 'calendar-filter-event_type' => [4]];
             });
             $model->addDynamicMethod('hasUserPermission', function ($permission) use ($model) {
                 return in_array($permission, $model->userPermissions);
