@@ -122,12 +122,20 @@ class Plugin extends PluginBase
     {
         User::extend(function ($model) {
             $model->belongsTo['role'] = UserRole::class;
-            $model->setAppends(['user_permissions']);
+            $model->setAppends(['user_permissions', 'default_settings', 'settings']);
             $model->addDynamicMethod('getUserPermissionsAttribute', function () use ($model) {
                 if (!$model->role) {
                     return [];
                 }
                 return is_array($model->role->permissions) ? $model->role->permissions : [];
+            });
+            // TODO implement getDefaultSettingsAttribute
+            $model->addDynamicMethod('getDefaultSettingsAttribute', function () use ($model) {
+                return ['calendar-subscribed' => true];
+            });
+            // TODO implement getSettingsAttribute
+            $model->addDynamicMethod('getSettingsAttribute', function () use ($model) {
+                return ['calendar-subscribed' => false];
             });
             $model->addDynamicMethod('hasUserPermission', function ($permission) use ($model) {
                 return in_array($permission, $model->userPermissions);
