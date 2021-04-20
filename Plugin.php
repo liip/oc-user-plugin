@@ -122,8 +122,8 @@ class Plugin extends PluginBase
     {
         User::extend(function ($model) {
             $model->belongsTo['role'] = UserRole::class;
-            $model->setAppends(['user_permissions', 'settings']);
-            $model->jsonable = ['settings'];
+            $model->setAppends(['user_permissions']);
+            $model->addCasts(['settings' => 'array']);
             $model->addDynamicMethod('getUserPermissionsAttribute', function () use ($model) {
                 if (!$model->role) {
                     return [];
@@ -132,12 +132,6 @@ class Plugin extends PluginBase
             });
             $model->addDynamicMethod('hasUserPermission', function ($permission) use ($model) {
                 return in_array($permission, $model->userPermissions);
-            });
-            $model->addDynamicMethod('getSettingsAttribute', function () use ($model) {
-                return json_decode($model->attributes['settings']);
-            });
-            $model->addDynamicMethod('setSettingsAttribute', function ($value) use ($model) {
-                $model->attributes['settings'] = json_encode($value);
             });
         });
     }
