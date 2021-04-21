@@ -1,11 +1,11 @@
-<?php namespace Liip\User\Classes;
+<?php
+
+namespace Liip\User\Classes;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Liip\User\Models\Throttle;
 use October\Rain\Auth\AuthException;
 use \RainLab\User\Classes\AuthManager as BaseAuthManager;
-use Session;
-use Cookie;
 use System\Classes\PluginManager;
 use Event;
 
@@ -77,8 +77,7 @@ class AuthManager extends BaseAuthManager
             // All excepted the hashed attributes
             if (in_array($credential, $hashableAttributes)) {
                 $hashedCredentials = array_merge($hashedCredentials, [$credential => $value]);
-            }
-            else {
+            } else {
                 $query = $query->where($credential, '=', $value);
             }
         }
@@ -97,7 +96,8 @@ class AuthManager extends BaseAuthManager
                 // Incorrect password
                 if ($credential == 'password') {
                     throw new AuthException(sprintf(
-                        'A user was found to match all plain text credentials however hashed credential "%s" did not match.', $credential
+                        'A user was found to match all plain text credentials however hashed credential "%s" did not match.',
+                        $credential
                     ), self::ERROR_AUTHENTICATION);
                 }
 

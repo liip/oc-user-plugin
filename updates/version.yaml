@@ -2,3 +2,6 @@
 1.0.2:
     - 'add roles'
     - migration102.php
+1.0.3:
+    - 'add api_token'
+    - migration103.php
