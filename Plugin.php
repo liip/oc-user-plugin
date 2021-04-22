@@ -96,6 +96,14 @@ class Plugin extends PluginBase
                     'emptyOption' => '--',
                 ],
             ]);
+            $widget->addTabFields([
+                'api_token' => [
+                    'label' => 'liip.user::lang.user.api_token',
+                    'span' => 'full',
+                    'type' => 'accesstoken',
+                    'tab' => 'rainlab.user::lang.user.account'
+                ],
+            ]);
         });
         Event::listen('backend.list.extendColumns', function ($widget) {
             $controller = $widget->getController();
@@ -134,5 +142,12 @@ class Plugin extends PluginBase
                 return in_array($permission, $model->userPermissions);
             });
         });
+    }
+
+    public function registerFormWidgets()
+    {
+        return [
+            'Liip\User\FormWidgets\AccessToken' => 'accesstoken',
+        ];
     }
 }

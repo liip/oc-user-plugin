@@ -1,0 +1,17 @@
+<?php if ($this->previewMode): ?>
+
+<div class="form-control">
+    <?= $value ?>
+</div>
+
+<?php else: ?>
+<div class="input-group">
+    <div id="wrapper-<?= $this->getId('input') ?>">
+        <?= $this->makePartial('control') ?>
+    </div>
+    <a href="javascript:;" data-request="<?= $this->getEventHandler('onRefresh') ?>"
+        class="input-group-addon btn btn-secondary" data-toggle="">
+        <i class="icon-refresh" data-icon=""></i>
+    </a>
+</div>
+<?php endif ?>

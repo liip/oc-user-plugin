@@ -4,6 +4,6 @@
     ],
     'user' => [
         'role' => 'Rolle',
+        'api_token' => 'Access Token',
     ],
 ];
-
