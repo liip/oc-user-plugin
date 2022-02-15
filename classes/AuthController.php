@@ -24,7 +24,7 @@ class AuthController
     public function login()
     {
         try {
-            $user = Auth::authenticate(request()->json()->all());
+            $user = Auth::authenticate(request()->all());
             if ($message = Event::fire('liip.user.authenticated', [$user], true)) {
                 Auth::logout();
                 return response( $message, 403);
@@ -34,8 +34,8 @@ class AuthController
         } catch (\October\Rain\Auth\AuthException $e) {
             $code = $e->getCode();
             $errorMessage = 'Error.server';
-
-            if ($code === AuthManager::ERROR_ACTIVATED) {
+                        
+            if ($code === AuthManager::ERROR_ACTIVATED || $code === 0) {
                 $errorMessage = 'Error.activated';
             }
             if ($code === AuthManager::ERROR_BANNED) {
@@ -67,7 +67,7 @@ class AuthController
             throw new ApplicationException(Lang::get('rainlab.user::lang.account.registration_disabled'));
         }
 
-        $password = post('password');
+        $password = request()->get('password');
         $credentials = [
             'email' => request()->get('email'),
             'password' => $password,
@@ -99,13 +99,13 @@ class AuthController
     {
         $rules = [
             'email' => 'required|email|between:6,255'
-        ];
-        $validation = Validator::make(post(), $rules);
+        ];        
+        $validation = Validator::make(request()->all(), $rules);
         if ($validation->fails()) {
             return response('Error.restore.emailInvalid', 400);
         }
 
-        $user = UserModel::findByEmail(post('email'));
+        $user = UserModel::findByEmail(request()->post('email'));
         if( $user ) {
             Mail::to($user)->send(new MailResetPassword($user));
         }
@@ -117,14 +117,14 @@ class AuthController
             'password' => 'required|between:8,255',
             'code' => 'required',
         ];
-        $validation = Validator::make(post(), $rules);
+        $validation = Validator::make(request()->all(), $rules);
         if($validation->fails()) {
             return response('Error.restore_validation', 400);
         }
 
-        $user = User::where('reset_password_code', post('code'))->first();
+        $user = User::where('reset_password_code', request()->post('code'))->first();
 
-        if (!$user || !$user->attemptResetPassword(post('code'), post('password'))) {
+        if (!$user || !$user->attemptResetPassword(request()->post('code'), request()->post('password'))) {
             return response('Error.restore_code_invalid', 400);
         }
     }
