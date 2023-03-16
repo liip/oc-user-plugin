@@ -1,7 +1,7 @@
-1.0.1: 'First version of user'
-1.0.2:
+v1.0.1: 'First version of user'
+v1.0.2:
     - 'add roles'
     - migration102.php
-1.0.3:
+v1.0.3:
     - 'add api_token'
     - migration103.php
