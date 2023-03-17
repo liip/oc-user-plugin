@@ -1,7 +1,7 @@
 v1.0.1: 'First version of user'
 v1.0.2:
     - 'add roles'
-    - migration102.php
+    - create_table_liip_user_roles.php
 v1.0.3:
     - 'add api_token'
-    - migration103.php
+    - add_api_token.php
