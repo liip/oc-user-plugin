@@ -18,13 +18,21 @@ class AuthController
 {
     public function index()
     {
-        return Auth::getUser();
+        return Auth::user();
     }
 
     public function login()
     {
         try {
-            $user = Auth::authenticate(request()->all());
+            $success = Auth::attempt([
+                'email' => post('login'),
+                'password' => post('password'),
+            ]);
+            if (!$success) {
+                return response('Error.authentication', 403);
+            }
+
+            $user = Auth::user();
             if ($message = Event::fire('liip.user.authenticated', [$user], true)) {
                 Auth::logout();
                 return response( $message, 403);
