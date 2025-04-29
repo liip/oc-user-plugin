@@ -34,7 +34,7 @@ class AuthController
         } catch (\October\Rain\Auth\AuthException $e) {
             $code = $e->getCode();
             $errorMessage = 'Error.server';
-                        
+
             if ($code === AuthManager::ERROR_ACTIVATED || $code === 0) {
                 $errorMessage = 'Error.activated';
             }
@@ -64,7 +64,7 @@ class AuthController
     {
         $canRegister = UserSettings::get('allow_registration', true);
         if (!$canRegister) {
-            throw new ApplicationException(Lang::get('rainlab.user::lang.account.registration_disabled'));
+            throw new ApplicationException(Lang::get('liip.user::lang.user.registration_disabled'));
         }
 
         $password = request()->get('password');
@@ -99,7 +99,7 @@ class AuthController
     {
         $rules = [
             'email' => 'required|email|between:6,255'
-        ];        
+        ];
         $validation = Validator::make(request()->all(), $rules);
         if ($validation->fails()) {
             return response('Error.restore.emailInvalid', 400);
