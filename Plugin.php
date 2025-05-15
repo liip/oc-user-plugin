@@ -4,7 +4,6 @@ namespace Liip\User;
 
 use Liip\User\Classes\AuthManager;
 use Liip\User\Models\UserRole;
-use RainLab\User\Controllers\Users;
 use RainLab\User\Models\User;
 use System\Classes\PluginBase;
 use App;
@@ -80,15 +79,14 @@ class Plugin extends PluginBase
      */
     protected function extendRainlabUserFormFields()
     {
-        Event::listen('backend.form.extendFields', function ($widget) {
-            $controller = $widget->getController();
+        Event::listen('backend.form.extendFields', function ($form) {
 
             // Only for the User model
-            if (!$widget->model instanceof User) {
+            if (!$form->getModel() instanceof User) {
                 return;
             }
 
-            $widget->addFields([
+            $form->addFields([
                 'role' => [
                     'label' => 'liip.user::lang.user.role',
                     'span' => 'full',
@@ -96,21 +94,20 @@ class Plugin extends PluginBase
                     'emptyOption' => '--',
                 ],
             ]);
-            $widget->addTabFields([
+            $form->addTabFields([
                 'api_token' => [
                     'label' => 'liip.user::lang.user.api_token',
                     'span' => 'full',
                     'type' => 'accesstoken',
-                    'tab' => 'rainlab.user::lang.user.account'
+                    'tab' => 'Account'
                 ],
             ]);
         });
-        Event::listen('backend.list.extendColumns', function ($widget) {
-            $controller = $widget->getController();
-            if (!($controller instanceof Users)) {
+        Event::listen('backend.list.extendColumns', function ($listWidget) {
+            if (!$listWidget->getModel() instanceof User) {
                 return;
             }
-            $widget->addColumns([
+            $listWidget->addColumns([
                 'role' => [
                     'label' => 'liip.user::lang.user.role',
                     'type' => 'text',

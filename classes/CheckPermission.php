@@ -6,7 +6,7 @@ use Auth;
 class CheckPermission
 {
     public function handle($request, Closure $next, $permission) {
-        $user = Auth::getUser();
+        $user = Auth::user();
         if ($user === null) {
             return response('not authenticated', 401);
         }
